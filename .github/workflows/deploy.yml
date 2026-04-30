@@ -22,9 +22,13 @@ jobs:
           TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
         run: |
           set -x
-          echo "HOST=$HOST"
           echo "$KEY" > /tmp/key && chmod 600 /tmp/key
-          ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "mkdir -p /home/tgbot && pkill -f tgbot-bot || true"
+          # 1. Создать папку
+          ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "mkdir -p /home/tgbot"
+          # 2. Убить старый процесс (если есть)
+          ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "pkill -f tgbot-bot || true"
+          # 3. Скопировать бинарник
           cat tgbot-bot | ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "cat > /home/tgbot/tgbot-bot"
+          # 4. Создать .env и запустить
           ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "echo 'TELEGRAM_TOKEN=${TOKEN}' > /home/tgbot/.env && chmod +x /home/tgbot/tgbot-bot && cd /home/tgbot && nohup ./tgbot-bot > logs.txt 2>&1 &"
           rm -f /tmp/key
