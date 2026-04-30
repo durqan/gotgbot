@@ -68,8 +68,6 @@ func handleCommand(bot *tgbotapi.BotAPI, chatID int64, message *tgbotapi.Message
 		return commands.HandleRemind(bot, chatID, message.Text)
 	case "reminders":
 		return commands.GetRemindersList(chatID)
-	case "myhoroscope":
-		return commands.HandleMyHoroscope(chatID)
 	case "cancel":
 		words := strings.Split(message.Text, " ")
 		if len(words) < 2 {
@@ -165,10 +163,7 @@ func handleCallback(bot *tgbotapi.BotAPI, query *tgbotapi.CallbackQuery) {
 	case "help":
 		response = "📋 Доступные команды:\n• /start - главное меню\n• /remind 5 текст - быстрая команда\n• /reminders - список напоминаний\n• /cancel ID - отменить\n• /horoscope - гороскоп\n• /sethoroscope - выбрать знак\n• /myhoroscope - мой гороскоп"
 	default:
-		if strings.HasPrefix(data, "sign_") {
-			sign := strings.TrimPrefix(data, "sign_")
-			response = commands.HandleHoroscope(chatID, sign)
-		} else if id, err := strconv.Atoi(data); err == nil {
+		if id, err := strconv.Atoi(data); err == nil {
 			response = commands.HandleCancel(chatID, id)
 		} else {
 			response = "Неизвестная команда"
