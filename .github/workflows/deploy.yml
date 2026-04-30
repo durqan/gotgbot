@@ -25,8 +25,6 @@ jobs:
           echo "$KEY" > /tmp/key && chmod 600 /tmp/key
           # 1. Создать папку
           ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "mkdir -p /home/tgbot"
-          # 2. Убить старый процесс (если есть)
-          ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "pkill -f tgbot-bot || true"
           # 3. Скопировать бинарник
           cat tgbot-bot | ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "cat > /home/tgbot/tgbot-bot"
           # 4. Создать .env и запустить
