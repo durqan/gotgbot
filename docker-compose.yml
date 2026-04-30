@@ -1,7 +1,11 @@
 services:
   bot:
-    build: .
+    image: alpine:latest
     container_name: telegram_bot
+    working_dir: /app
+    command: ["./tgbot-bot"]
     environment:
       TELEGRAM_TOKEN: ${TELEGRAM_TOKEN}
+    volumes:
+      - /home/gotgbot:/app
     restart: unless-stopped
