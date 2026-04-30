@@ -21,6 +21,7 @@ jobs:
           KEY: ${{ secrets.VPS_SSH_KEY }}
           TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
         run: |
+          set -x
           echo "$KEY" > /tmp/key && chmod 600 /tmp/key
           ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "mkdir -p /home/tgbot && pkill -f tgbot-bot || true"
           cat tgbot-bot | ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "cat > /home/tgbot/tgbot-bot"
