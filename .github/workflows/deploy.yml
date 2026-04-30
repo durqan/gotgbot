@@ -24,9 +24,9 @@ jobs:
           set -x
           echo "$KEY" > /tmp/key && chmod 600 /tmp/key
           # 1. Создать папку
-          ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "mkdir -p /home/tgbot"
-          # 3. Скопировать бинарник
-          cat tgbot-bot | ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "cat > /home/tgbot/tgbot-bot"
-          # 4. Создать .env и запустить
-          ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "echo 'TELEGRAM_TOKEN=${TOKEN}' > /home/tgbot/.env && chmod +x /home/tgbot/tgbot-bot && cd /home/tgbot && nohup ./tgbot-bot > logs.txt 2>&1 &"
+          ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "mkdir -p /home/gotgbot"
+          # 2. Скопировать бинарник
+          cat tgbot-bot | ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "cat > /home/gotgbot/tgbot-bot"
+          # 3. Создать .env и запустить
+          ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "echo 'TELEGRAM_TOKEN=${TOKEN}' > /home/gotgbot/.env && chmod +x /home/gotgbot/tgbot-bot && cd /home/gotgbot && nohup ./tgbot-bot > logs.txt 2>&1 &"
           rm -f /tmp/key
