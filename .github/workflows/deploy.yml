@@ -1,0 +1,28 @@
+name: Deploy Telegram Bot
+
+on:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+      - run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o tgbot-bot .
+
+      - name: Deploy to VPS
+        env:
+          HOST: ${{ secrets.VPS_HOST }}
+          KEY: ${{ secrets.VPS_SSH_KEY }}
+          TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+        run: |
+          echo "$KEY" > /tmp/key && chmod 600 /tmp/key
+          ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "mkdir -p /home/tgbot && pkill -f tgbot-bot || true"
+          cat tgbot-bot | ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "cat > /home/tgbot/tgbot-bot"
+          ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "echo 'TELEGRAM_TOKEN=${TOKEN}' > /home/tgbot/.env && chmod +x /home/tgbot/tgbot-bot && cd /home/tgbot && nohup ./tgbot-bot > logs.txt 2>&1 &"
+          rm -f /tmp/key

@@ -1,20 +1,9 @@
-# Этап сборки
-FROM golang:1.26-alpine AS builder
+FROM debian:bullseye-slim
 
-WORKDIR /app
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
-COPY go.mod go.sum ./
-RUN go mod download
+WORKDIR /root/
 
-COPY . .
-
-RUN go build -o bot .
-
-# Этап запуска
-FROM alpine:3.20
-
-WORKDIR /app
-
-COPY --from=builder /app/bot .
+COPY bot .
 
 CMD ["./bot"]
