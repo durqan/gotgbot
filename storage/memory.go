@@ -8,18 +8,9 @@ import (
 var (
 	Reminders   = make(map[int64][]models.Reminder)
 	UserStates  = make(map[int64]*models.UserState)
-	UserSigns   = make(map[int64]string)
 	LastMessage = make(map[int64]time.Time)
 	NextID      = 1
 )
-
-func SetUserSign(chatID int64, sign string) {
-	UserSigns[chatID] = sign
-}
-
-func GetUserSign(chatID int64) string {
-	return UserSigns[chatID]
-}
 
 func AddReminder(chatID int64, reminder models.Reminder) int {
 	reminder.ID = NextID

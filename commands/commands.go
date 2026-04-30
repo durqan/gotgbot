@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"tgbot/horoscope"
 	"time"
 
 	"tgbot/models"
@@ -25,14 +24,11 @@ func HandleRemind(bot *tgbotapi.BotAPI, chatID int64, text string) string {
 	}
 
 	reminderText := strings.Join(words[2:], " ")
-
-	reminder := models.Reminder{
+	id := storage.AddReminder(chatID, models.Reminder{
 		ChatID: chatID,
 		Text:   reminderText,
 		Time:   time.Now().Add(time.Duration(minutes) * time.Minute),
-	}
-
-	id := storage.AddReminder(chatID, reminder)
+	})
 
 	go func() {
 		time.Sleep(time.Duration(minutes) * time.Minute)
@@ -63,25 +59,4 @@ func HandleCancel(chatID int64, id int) string {
 		return fmt.Sprintf("✅ Напоминание #%d отменено", id)
 	}
 	return "❌ Напоминание с таким ID не найдено.\nИспользуй /reminders для просмотра"
-}
-
-func HandleHoroscope(chatID int64, sign string) string {
-	h, err := horoscope.GetDailyHoroscope(sign)
-	if err != nil {
-		return "❌ Не удалось получить гороскоп. Попробуй позже."
-	}
-	return horoscope.FormatHoroscope(sign, h)
-}
-
-func HandleSetSign(chatID int64, sign string) string {
-	storage.SetUserSign(chatID, sign)
-	return fmt.Sprintf("✅ Твой знак зодиака установлен: %s\nТеперь используй /myhoroscope", sign)
-}
-
-func HandleMyHoroscope(chatID int64) string {
-	sign := storage.GetUserSign(chatID)
-	if sign == "" {
-		return "❌ Ты ещё не выбрал знак зодиака.\nИспользуй /sethoroscope"
-	}
-	return HandleHoroscope(chatID, sign)
 }

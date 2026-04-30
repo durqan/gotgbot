@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"tgbot/commands"
-	"tgbot/horoscope"
 	"tgbot/models"
 	"tgbot/storage"
 
@@ -69,11 +68,6 @@ func handleCommand(bot *tgbotapi.BotAPI, chatID int64, message *tgbotapi.Message
 		return commands.HandleRemind(bot, chatID, message.Text)
 	case "reminders":
 		return commands.GetRemindersList(chatID)
-	case "horoscope":
-		return handleHoroscopeList(bot, chatID)
-	case "sethoroscope":
-		sendSignKeyboard(bot, chatID)
-		return ""
 	case "myhoroscope":
 		return commands.HandleMyHoroscope(chatID)
 	case "cancel":
@@ -132,7 +126,6 @@ func sendStartMenu(bot *tgbotapi.BotAPI, chatID int64) {
 		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData("❌ Отменить напоминание", "cancel"),
-			tgbotapi.NewInlineKeyboardButtonData("🔮 Гороскоп", "horoscope"),
 		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData("❓ Помощь", "help"),
@@ -155,27 +148,6 @@ func sendHelpMenu(bot *tgbotapi.BotAPI, chatID int64) {
 	bot.Send(msg)
 }
 
-func sendSignKeyboard(bot *tgbotapi.BotAPI, chatID int64) {
-	var rows [][]tgbotapi.InlineKeyboardButton
-	for i := 0; i < len(horoscope.Signs); i += 3 {
-		row := []tgbotapi.InlineKeyboardButton{}
-		for j := i; j < i+3 && j < len(horoscope.Signs); j++ {
-			row = append(row, tgbotapi.NewInlineKeyboardButtonData(horoscope.Signs[j], "sign_"+horoscope.Signs[j]))
-		}
-		rows = append(rows, row)
-	}
-
-	keyboard := tgbotapi.NewInlineKeyboardMarkup(rows...)
-	msg := tgbotapi.NewMessage(chatID, "🔮 Выбери свой знак зодиака:")
-	msg.ReplyMarkup = keyboard
-	bot.Send(msg)
-}
-
-func handleHoroscopeList(bot *tgbotapi.BotAPI, chatID int64) string {
-	sendSignKeyboard(bot, chatID)
-	return "🔮 Выбери знак зодиака, чтобы узнать гороскоп:"
-}
-
 func handleCallback(bot *tgbotapi.BotAPI, query *tgbotapi.CallbackQuery) {
 	chatID := query.Message.Chat.ID
 	data := query.Data
@@ -192,12 +164,6 @@ func handleCallback(bot *tgbotapi.BotAPI, query *tgbotapi.CallbackQuery) {
 		response = "❌ Отправь ID напоминания, которое нужно отменить\n(Например: 1)\n\nСписок ID можно посмотреть через кнопку \"📋 Мои напоминания\""
 	case "help":
 		response = "📋 Доступные команды:\n• /start - главное меню\n• /remind 5 текст - быстрая команда\n• /reminders - список напоминаний\n• /cancel ID - отменить\n• /horoscope - гороскоп\n• /sethoroscope - выбрать знак\n• /myhoroscope - мой гороскоп"
-	case "horoscope":
-		response = handleHoroscopeList(bot, chatID)
-		bot.Send(tgbotapi.NewCallback(query.ID, ""))
-		msg := tgbotapi.NewMessage(chatID, response)
-		bot.Send(msg)
-		return
 	default:
 		if strings.HasPrefix(data, "sign_") {
 			sign := strings.TrimPrefix(data, "sign_")
