@@ -140,6 +140,8 @@ func sendStartMenu(bot *tgbotapi.BotAPI, chatID int64) {
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData("➕ Добавить напоминание", "add"),
 			tgbotapi.NewInlineKeyboardButtonData("📋 Мои напоминания", "list"),
+		),
+		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData("Орел или решка", "coin"),
 		),
 		tgbotapi.NewInlineKeyboardRow(
