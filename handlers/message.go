@@ -50,9 +50,11 @@ func HandleMessage(bot *tgbotapi.BotAPI, update tgbotapi.Update) {
 	}
 
 	log.Printf("Ответ для %d: %s", chatID, response)
-	msg := tgbotapi.NewMessage(chatID, response)
-	if _, err := bot.Send(msg); err != nil {
-		log.Printf("Ошибка отправки для %d: %s", chatID, err)
+	if response != "" {
+		msg := tgbotapi.NewMessage(chatID, response)
+		if _, err := bot.Send(msg); err != nil {
+			log.Printf("Ошибка отправки для %d: %s", chatID, err)
+		}
 	}
 }
 
@@ -123,7 +125,7 @@ func sendStartMenu(bot *tgbotapi.BotAPI, chatID int64) {
 			tgbotapi.NewInlineKeyboardButtonData("📋 Мои напоминания", "list"),
 		),
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData("❌ Отменить напоминаниеs", "cancel"),
+			tgbotapi.NewInlineKeyboardButtonData("❌ Отменить напоминание", "cancel"),
 		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData("❓ Помощь", "help"),
@@ -134,7 +136,7 @@ func sendStartMenu(bot *tgbotapi.BotAPI, chatID int64) {
 }
 
 func sendHelpMenu(bot *tgbotapi.BotAPI, chatID int64) {
-	msg := tgbotapi.NewMessage(chatID, "📋 Доступные команды:\n/start - главное меню\n/remind 5 текст - быстрая команда\n/reminders - список напоминаний\n/cancel ID - отменить\n/horoscope - гороскоп\n/sethoroscope - выбрать знак\n/myhoroscope - мой гороскоп")
+	msg := tgbotapi.NewMessage(chatID, "📋 Доступные команды:\n/start - главное меню\n/remind 5 текст - быстрая команда\n/reminders - список напоминаний\n/cancel ID - отменить")
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData("➕ Добавить", "add"),
@@ -160,7 +162,7 @@ func handleCallback(bot *tgbotapi.BotAPI, query *tgbotapi.CallbackQuery) {
 	case "cancel":
 		response = "❌ Отправь ID напоминания, которое нужно отменить\n(Например: 1)\n\nСписок ID можно посмотреть через кнопку \"📋 Мои напоминания\""
 	case "help":
-		response = "📋 Доступные команды:\n• /start - главное меню\n• /remind 5 текст - быстрая команда\n• /reminders - список напоминаний\n• /cancel ID - отменить\n• /horoscope - гороскоп\n• /sethoroscope - выбрать знак\n• /myhoroscope - мой гороскоп"
+		response = "📋 Доступные команды:\n• /start - главное меню\n• /remind 5 текст - быстрая команда\n• /reminders - список напоминаний\n• /cancel ID - отменить"
 	default:
 		if id, err := strconv.Atoi(data); err == nil {
 			response = commands.HandleCancel(chatID, id)
