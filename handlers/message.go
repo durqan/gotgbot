@@ -119,7 +119,7 @@ func sendStartMenu(bot *tgbotapi.BotAPI, chatID int64) {
 	msg := tgbotapi.NewMessage(chatID, "Привет! Я бот напоминалок")
 	keyboard := tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData("➕ Добавить напоминание", "add"),
+			tgbotapi.NewInlineKeyboardButtonData("➕ Добавить напоминаниеs", "add"),
 			tgbotapi.NewInlineKeyboardButtonData("📋 Мои напоминания", "list"),
 		),
 		tgbotapi.NewInlineKeyboardRow(
