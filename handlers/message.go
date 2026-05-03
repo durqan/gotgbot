@@ -139,7 +139,6 @@ func sendHelpMenu(bot *tgbotapi.BotAPI, chatID int64) {
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData("➕ Добавить", "add"),
 			tgbotapi.NewInlineKeyboardButtonData("📋 Список", "list"),
-			tgbotapi.NewInlineKeyboardButtonData("🔮 Гороскоп", "horoscope"),
 		),
 	)
 	msg.ReplyMarkup = keyboard
