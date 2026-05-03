@@ -30,3 +30,6 @@ jobs:
           # 3. Создать .env и запустить
           ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "echo 'TELEGRAM_TOKEN=${TOKEN}' > /home/gotgbot/.env && chmod +x /home/gotgbot/tgbot-bot && cd /home/gotgbot && nohup ./tgbot-bot > logs.txt 2>&1 &"
           rm -f /tmp/key
+      - name: Restart bot
+        run: |
+          ssh -i /tmp/key root@${HOST} "cd /home/gotgbot && docker compose down && docker compose up -d"
