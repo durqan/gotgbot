@@ -23,13 +23,17 @@ jobs:
         run: |
           set -x
           echo "$KEY" > /tmp/key && chmod 600 /tmp/key
-          # 1. Создать папку
+
+          # Создаём папку
           ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "mkdir -p /home/gotgbot"
-          # 2. Скопировать бинарник
+
+          # Копируем бинарник
           cat tgbot-bot | ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "cat > /home/gotgbot/tgbot-bot"
-          # 3. Создать .env и запустить
-          ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "echo 'TELEGRAM_TOKEN=${TOKEN}' > /home/gotgbot/.env && chmod +x /home/gotgbot/tgbot-bot && cd /home/gotgbot && nohup ./tgbot-bot > logs.txt 2>&1 &"
+
+          # Создаём .env c токеном
+          ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "echo 'TELEGRAM_TOKEN=${TOKEN}' > /home/gotgbot/.env"
+
+          # Делаем исполняемым и запускаем через Docker
+          ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "chmod +x /home/gotgbot/tgbot-bot && cd /home/gotgbot && docker compose down && docker compose up -d"
+
           rm -f /tmp/key
-      - name: Restart bot
-        run: |
-          ssh -i /tmp/key root@${HOST} "cd /home/gotgbot && docker compose down && docker compose up -d"
