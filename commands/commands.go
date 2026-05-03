@@ -34,6 +34,7 @@ func HandleRemind(bot *tgbotapi.BotAPI, chatID int64, text string) string {
 		time.Sleep(time.Duration(minutes) * time.Minute)
 		msg := tgbotapi.NewMessage(chatID, "🔔 НАПОМИНАНИЕ: "+reminderText)
 		bot.Send(msg)
+
 	}()
 
 	return fmt.Sprintf("✅ Напоминание установлено!\n📝 %s\n🆔 ID: %d\n⏰ Через %d минут", reminderText, id, minutes)
