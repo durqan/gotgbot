@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"strconv"
 	"strings"
 	"time"
@@ -66,6 +67,9 @@ func handleCommand(bot *tgbotapi.BotAPI, chatID int64, message *tgbotapi.Message
 	case "help":
 		sendHelpMenu(bot, chatID)
 		return ""
+	case "coin":
+		coin(bot, chatID)
+		return ""
 	case "remind":
 		return commands.HandleRemind(bot, chatID, message.Text)
 	case "reminders":
@@ -83,6 +87,19 @@ func handleCommand(bot *tgbotapi.BotAPI, chatID int64, message *tgbotapi.Message
 	default:
 		return "Неизвестная команда. Используй /help"
 	}
+}
+
+func coin(bot *tgbotapi.BotAPI, chatID int64) {
+	var response string
+
+	if rand.Intn(2) == 0 {
+		response = "🪙 Орёл"
+	} else {
+		response = "🪙 Решка"
+	}
+
+	msg := tgbotapi.NewMessage(chatID, response)
+	bot.Send(msg)
 }
 
 func handleDialog(bot *tgbotapi.BotAPI, chatID int64, state *models.UserState, text string) string {
@@ -123,6 +140,7 @@ func sendStartMenu(bot *tgbotapi.BotAPI, chatID int64) {
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData("➕ Добавить напоминание", "add"),
 			tgbotapi.NewInlineKeyboardButtonData("📋 Мои напоминания", "list"),
+			tgbotapi.NewInlineKeyboardButtonData("Орел или решка", "coin"),
 		),
 		tgbotapi.NewInlineKeyboardRow(
 			tgbotapi.NewInlineKeyboardButtonData("❌ Отменить напоминание", "cancel"),
@@ -163,6 +181,10 @@ func handleCallback(bot *tgbotapi.BotAPI, query *tgbotapi.CallbackQuery) {
 		response = "❌ Отправь ID напоминания, которое нужно отменить\n(Например: 1)\n\nСписок ID можно посмотреть через кнопку \"📋 Мои напоминания\""
 	case "help":
 		response = "📋 Доступные команды:\n• /start - главное меню\n• /remind 5 текст - быстрая команда\n• /reminders - список напоминаний\n• /cancel ID - отменить"
+	case "coin":
+		coin(bot, chatID)
+		bot.Send(tgbotapi.NewCallback(query.ID, ""))
+		return
 	default:
 		if id, err := strconv.Atoi(data); err == nil {
 			response = commands.HandleCancel(chatID, id)
