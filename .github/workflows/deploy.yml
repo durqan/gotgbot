@@ -34,6 +34,6 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "echo 'TELEGRAM_TOKEN=${TOKEN}' > /home/gotgbot/.env"
 
           # Делаем исполняемым и запускаем через Docker
-          ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "chmod +x /home/gotgbot/tgbot-bot && cd /home/gotgbot && docker compose down && docker compose up -d"
+          ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "cd /home/gotgbot && docker compose down && docker compose up -d --force-recreate"
 
           rm -f /tmp/key
