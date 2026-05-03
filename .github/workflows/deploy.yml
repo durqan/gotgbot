@@ -24,6 +24,9 @@ jobs:
           set -x
           echo "$KEY" > /tmp/key && chmod 600 /tmp/key
 
+          # Останавливаем старый контейнер
+          ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "cd /home/gotgbot && docker compose down"
+
           # Создаём папку
           ssh -o StrictHostKeyChecking=no -i /tmp/key root@${HOST} "mkdir -p /home/gotgbot"
 
